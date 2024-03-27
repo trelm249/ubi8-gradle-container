@@ -5,10 +5,10 @@ CMD ["gradle"]
 ENV GRADLE_HOME /opt/gradle
 
 #Install Java runtime
-RUN set -o errexit -o nounset &&\
-    microdnf -y upgrade --refresh --best --nodocs --noplugins --setopt=install_weak_deps=0&&\
-    microdnf install -y java-1.8.0-openjdk-devel unzip shadow-utils which curl wget openssh-clients git git-lfs --nodocs --setopt=install_weak_deps=0&&\
-    microdnf clean all
+RUN set -o errexit -o nounset \
+    && microdnf -y upgrade --refresh --best --nodocs --noplugins --setopt=install_weak_deps=0 \
+    && microdnf install -y java-1.8.0-openjdk-devel unzip shadow-utils which curl git --nodocs --setopt=install_weak_deps=0 \
+    && microdnf clean all
 
 RUN set -o errexit -o nounset \
     && echo "Adding gradle user and group" \
@@ -29,7 +29,7 @@ ENV GRADLE_VERSION 6.9.3
 ARG GRADLE_DOWNLOAD_SHA256=dcf350b8ae1aa192fc299aed6efc77b43825d4fedb224c94118ae7faf5fb035d
 RUN set -o errexit -o nounset \
     && echo "Downloading Gradle" \
-    && wget --no-verbose --output-document=gradle.zip "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" \
+    && curl -L "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" -o gradle.zip \
     \
     && echo "Checking Gradle download hash" \
     && echo "${GRADLE_DOWNLOAD_SHA256} *gradle.zip" | sha256sum --check - \
